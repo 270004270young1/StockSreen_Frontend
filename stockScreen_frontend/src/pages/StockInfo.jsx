@@ -1,35 +1,70 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import Chart from "react-apexcharts";
 import axios from "axios";
 
-async function queryStock(source, setData) {
-  try {
-    const data = await axios.get("http://localhost:8080/api/querystock", {
-      cancelToken: source.token,
-    });
-    console.log(data);
-    setData(data);
-  } catch (error) {
-    console.log(error);
-  }
-}
 function StockInfo() {
-  const [candlesticks, setCandlesticks] = useState();
-  let source = axios.CancelToken.source();
-  const [data, setData] = useState(null);
-  useEffect(() => {
-    queryStock(source, setData);
-    // const formatCandlesticks = data.map((element)=>{
+  //const [candlesticks, setCandlesticks] = useState();
+  //const abortControllerRef = useRef(new AbortController());
 
-    // })
-    // setCandlesticks({})
-    return () => source.cancel("Cancle data");
-    //console.log(data);
+  // async function queryStock() {
+  //   try {
+  //     const data = await axios.get("http://localhost:8080/api/querystock", {
+  //       signal: abortControllerRef.current.signal,
+  //     });
+  //     console.log(data);
+  //     //setData(data);
+  //   } catch (error) {
+  //     console.log(error);
+  //   }
+  // }
+
+  const [data, setData] = useState(null);
+  const [isLoading, setIsLoading] = useState(true);
+  useEffect(() => {
+    //const controller = abortControllerRef.current;
+    // queryStock();
+
+    const abortController = new AbortController();
+    setIsLoading(true);
+    axios
+      .get("http://localhost:8080/api/querystock", {
+        signal: abortController.signal,
+      })
+      .then((e) => {
+        console.log(e.data);
+
+        const dataList = [];
+        e.data.candleSticks.forEach((obj) => {
+          const dataObj = {
+            x: obj.datetime,
+            y: [obj.open, obj.high, obj.low, obj.close],
+          };
+
+          dataList.push(dataObj);
+        });
+        console.log(dataList);
+        setData([{ data: dataList }]);
+        setIsLoading(false);
+      })
+      .catch((e) => {
+        console.log(e);
+      });
+    return () => {
+      abortController.abort();
+      setIsLoading(true);
+    };
   }, []);
 
   return (
     <>
-      <h1>StockInfo</h1>
+      {isLoading ? (
+        <h1>Loading...</h1>
+      ) : (
+        <div>
+          <h1>StockInfo</h1>
+          <Chart type="candlestick" series={data} options={{}} />
+        </div>
+      )}
     </>
   );
 }
