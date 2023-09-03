@@ -3,18 +3,20 @@ import Home from "./pages/Home.jsx";
 import "semantic-ui-css/semantic.min.css";
 import StockInfo from "./pages/StockInfo.jsx";
 import SearchBar from "./components/SearchBar.jsx";
-import { Container, Search } from "semantic-ui-react";
+import { Container } from "semantic-ui-react";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+import Test from "./Test.jsx";
 function App() {
   return (
     <>
       <Container>
         <SearchBar />
-        <div>
-          <StockInfo />
-        </div>
-        <div>
-          <h1>Hello</h1>
-        </div>
+        <BrowserRouter>
+          <Routes>
+            <Route path="/" element={<Home />} />
+            <Route path="stockinfo/:symbol" element={<StockInfo />} />
+          </Routes>
+        </BrowserRouter>
       </Container>
     </>
   );

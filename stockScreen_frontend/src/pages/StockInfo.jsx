@@ -1,25 +1,12 @@
 import { useEffect, useState, useRef } from "react";
 import Chart from "react-apexcharts";
 import axios from "axios";
+import { useParams } from "react-router-dom";
 
 function StockInfo() {
-  //const [candlesticks, setCandlesticks] = useState();
-  //const abortControllerRef = useRef(new AbortController());
-
-  // async function queryStock() {
-  //   try {
-  //     const data = await axios.get("http://localhost:8080/api/querystock", {
-  //       signal: abortControllerRef.current.signal,
-  //     });
-  //     console.log(data);
-  //     //setData(data);
-  //   } catch (error) {
-  //     console.log(error);
-  //   }
-  // }
-
   const [data, setData] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
+  let { symbol } = useParams();
   useEffect(() => {
     //const controller = abortControllerRef.current;
     // queryStock();
@@ -27,7 +14,7 @@ function StockInfo() {
     const abortController = new AbortController();
     setIsLoading(true);
     axios
-      .get("http://localhost:8080/api/querystock", {
+      .get(`http://localhost:8080/api/querystock/${symbol}`, {
         signal: abortController.signal,
       })
       .then((e) => {
@@ -54,7 +41,7 @@ function StockInfo() {
       abortController.abort();
       setIsLoading(true);
     };
-  }, []);
+  }, [symbol]);
 
   return (
     <>
