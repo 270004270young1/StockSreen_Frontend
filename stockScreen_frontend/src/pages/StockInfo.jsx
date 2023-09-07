@@ -2,6 +2,7 @@ import { useEffect, useState, useRef } from "react";
 import Chart from "react-apexcharts";
 import axios from "axios";
 import { useParams } from "react-router-dom";
+import { Loader } from "semantic-ui-react";
 
 function StockInfo() {
   const [data, setData] = useState(null);
@@ -18,8 +19,6 @@ function StockInfo() {
         signal: abortController.signal,
       })
       .then((e) => {
-        console.log(e.data);
-
         const dataList = [];
         e.data.candleSticks.forEach((obj) => {
           const dataObj = {
@@ -30,7 +29,6 @@ function StockInfo() {
           dataList.push(dataObj);
         });
         dataList.reverse();
-        console.log(dataList);
         setData([{ data: dataList }]);
         setIsLoading(false);
       })
@@ -39,14 +37,13 @@ function StockInfo() {
       });
     return () => {
       abortController.abort();
-      setIsLoading(true);
     };
   }, [symbol]);
 
   return (
     <>
       {isLoading ? (
-        <h1>Loading...</h1>
+        <Loader active={isLoading}>Loading...</Loader>
       ) : (
         <div>
           <h1>{symbol}</h1>
