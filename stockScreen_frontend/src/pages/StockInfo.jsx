@@ -49,7 +49,7 @@ function StockInfo() {
         <h1>Loading...</h1>
       ) : (
         <div>
-          <h1>StockInfo</h1>
+          <h1>{symbol}</h1>
           <Chart type="candlestick" series={data} options={{}} />
         </div>
       )}

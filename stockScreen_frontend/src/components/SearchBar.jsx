@@ -1,5 +1,6 @@
 import axios from "axios";
 import { useEffect, useReducer, useRef, useState } from "react";
+import { redirect, useNavigate } from "react-router-dom";
 import { Search } from "semantic-ui-react";
 
 const initialState = {
@@ -30,6 +31,8 @@ function SearchBar() {
   const SearchBarRef = useRef();
   const [state, dispatch] = useReducer(searchReducer, initialState);
   const { loading, results, value } = state;
+  const navigate = useNavigate();
+
   useEffect(() => {
     const controller = new AbortController();
     if (value.length > 0) {
@@ -70,17 +73,24 @@ function SearchBar() {
   }
 
   return (
-    <Search
-      className="flex justify-end"
-      loading={loading}
-      value={value}
-      onSearchChange={handleValueChange}
-      ref={SearchBarRef}
-      results={results}
-      onResultSelect={(e, data) =>
-        dispatch({ type: "UPDATE_SEARCH", selection: data.symbol })
-      }
-    />
+    <>
+      <Search
+        className="flex justify-end"
+        loading={loading}
+        aligned="right"
+        value={value}
+        onSearchChange={handleValueChange}
+        ref={SearchBarRef}
+        results={results}
+        onResultSelect={(e, data) => {
+          //dispatch({ type: "UPDATE_SEARCH", selection: data.result.title });
+          dispatch({ type: "CLEAN_SEARCH" });
+
+          console.log(data.result.title);
+          navigate(`stockinfo/${data.result.title}`);
+        }}
+      />
+    </>
   );
 }
 
