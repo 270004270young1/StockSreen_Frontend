@@ -30,6 +30,7 @@ function StockInfo() {
           dataList.push(dataObj);
         });
         dataList.reverse();
+        console.log(dataList);
         setData([{ data: dataList }]);
         setIsLoading(false);
         setError("");
