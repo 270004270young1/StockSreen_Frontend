@@ -2,11 +2,12 @@ import { useEffect, useState, useRef } from "react";
 import Chart from "react-apexcharts";
 import axios from "axios";
 import { useParams } from "react-router-dom";
-import { Loader } from "semantic-ui-react";
+import { Header, Label, Loader } from "semantic-ui-react";
 
 function StockInfo() {
   const [data, setData] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState("");
   let { symbol } = useParams();
   useEffect(() => {
     //const controller = abortControllerRef.current;
@@ -31,22 +32,33 @@ function StockInfo() {
         dataList.reverse();
         setData([{ data: dataList }]);
         setIsLoading(false);
+        setError("");
       })
       .catch((e) => {
         console.log(e);
+        setError(e.response.data.message);
       });
     return () => {
       abortController.abort();
+      setError("");
     };
   }, [symbol]);
 
   return (
     <>
       {isLoading ? (
-        <Loader active={isLoading}>Loading...</Loader>
+        <div>
+          <div className="flex justify-center">
+            <Label
+              className={error.length === 0 ? "hidden" : ""}
+              content={error}
+            />
+          </div>
+          <Loader active={isLoading}>Loading...</Loader>
+        </div>
       ) : (
         <div>
-          <h1>{symbol}</h1>
+          <Header>{symbol}</Header>
           <Chart type="candlestick" series={data} options={{}} />
         </div>
       )}
