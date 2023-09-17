@@ -9,7 +9,7 @@ import Test from "./Test.jsx";
 function App() {
   return (
     <>
-      <Container>
+      <Container className=" mt-6">
         <BrowserRouter>
           <Routes>
             <Route
@@ -21,7 +21,7 @@ function App() {
               }
             >
               <Route path="/" element={<Home />} />
-              <Route path="stockinfo/:symbol" element={<StockInfo />} />
+              <Route path="stockinfo/:symbol" element={<Test />} />
             </Route>
           </Routes>
         </BrowserRouter>

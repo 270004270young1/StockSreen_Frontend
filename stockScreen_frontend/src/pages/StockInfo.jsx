@@ -7,7 +7,7 @@ import { Header, Label, Loader } from "semantic-ui-react";
 function StockInfo() {
   const [data, setData] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState("");
+  const [errors, setErrors] = useState([]);
   let { symbol } = useParams();
   useEffect(() => {
     //const controller = abortControllerRef.current;
@@ -30,18 +30,17 @@ function StockInfo() {
           dataList.push(dataObj);
         });
         dataList.reverse();
-        console.log(dataList);
         setData([{ data: dataList }]);
         setIsLoading(false);
-        setError("");
+        setErrors([]);
       })
       .catch((e) => {
         console.log(e);
-        setError(e.response.data.message);
+        setErrors([...errors, e.response.data.message]);
       });
     return () => {
       abortController.abort();
-      setError("");
+      setErrors([]);
     };
   }, [symbol]);
 
@@ -50,10 +49,9 @@ function StockInfo() {
       {isLoading ? (
         <div>
           <div className="flex justify-center">
-            <Label
-              className={error.length === 0 ? "hidden" : ""}
-              content={error}
-            />
+            {errors.map((error) => (
+              <Label key={error} content={error} />
+            ))}
           </div>
           <Loader active={isLoading}>Loading...</Loader>
         </div>

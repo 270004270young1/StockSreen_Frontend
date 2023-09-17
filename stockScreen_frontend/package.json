@@ -10,6 +10,8 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "anychart": "^8.11.1",
+    "anychart-react": "^1.4.1",
     "apexcharts": "^3.42.0",
     "axios": "^1.5.0",
     "localforage": "^1.10.0",

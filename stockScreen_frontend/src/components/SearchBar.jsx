@@ -1,7 +1,7 @@
 import axios from "axios";
 import { useEffect, useReducer, useRef, useState } from "react";
 import { redirect, useNavigate } from "react-router-dom";
-import { Search } from "semantic-ui-react";
+import { Label, Search } from "semantic-ui-react";
 
 const initialState = {
   loading: false,
@@ -31,6 +31,7 @@ function SearchBar() {
   const SearchBarRef = useRef();
   const [state, dispatch] = useReducer(searchReducer, initialState);
   const { loading, results, value } = state;
+  const [error, setError] = useState("");
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -53,13 +54,15 @@ function SearchBar() {
             }
           });
           dispatch({ type: "FINISH_SEARCH", results: stocks });
-          console.log(e.data);
+          setError("");
         })
         .catch((e) => {
-          console.log(e);
+          setError(e.response.data.message);
+          console.log(error);
         });
     } else {
       dispatch({ type: "CLEAN_SEARCH" });
+      setError("");
     }
 
     return () => {
@@ -74,22 +77,28 @@ function SearchBar() {
 
   return (
     <>
-      <Search
-        className="flex justify-end"
-        loading={loading}
-        aligned="right"
-        value={value}
-        onSearchChange={handleValueChange}
-        ref={SearchBarRef}
-        results={results}
-        onResultSelect={(e, data) => {
-          //dispatch({ type: "UPDATE_SEARCH", selection: data.result.title });
-          dispatch({ type: "CLEAN_SEARCH" });
+      <div className="flex justify-end items-center">
+        <Label
+          content={error}
+          className={error.length === 0 ? "hidden" : "h-fit"}
+        />
 
-          console.log(data.result.title);
-          navigate(`stockinfo/${data.result.title}`);
-        }}
-      />
+        <Search
+          loading={loading}
+          aligned="right"
+          value={value}
+          onSearchChange={handleValueChange}
+          ref={SearchBarRef}
+          results={results}
+          onResultSelect={(e, data) => {
+            //dispatch({ type: "UPDATE_SEARCH", selection: data.result.title });
+            dispatch({ type: "CLEAN_SEARCH" });
+
+            console.log(data.result.title);
+            navigate(`stockinfo/${data.result.title}`);
+          }}
+        />
+      </div>
     </>
   );
 }
